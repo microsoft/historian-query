@@ -7,15 +7,15 @@ The **HistorianQuery** class is a wrapper around the **TSDF** class in the Datab
 [Tempo](https://databrickslabs.github.io/tempo/user-guide.html) library. It adds some functionality
 that is helpful for querying data from a historian in manufacturing context:
 
-* Returns records from start to end time (instead of just between first and last record for each
+- Returns records from start to end time (instead of just between first and last record for each
 tag).
-* Interval timestamp is rounded up instead of down, reporting the last known value at the given
+- Interval timestamp is rounded up instead of down, reporting the last known value at the given
 time point.
-* The original timestamp of the observation is also reported.
-* Timeout functionality - forward fill only up to a specified time interval to avoid stale values.
-* Filter by quality flag - historians often capture an indication of how reliable each observation
+- The original timestamp of the observation is also reported.
+- Timeout functionality - forward fill only up to a specified time interval to avoid stale values.
+- Filter by quality flag - historians often capture an indication of how reliable each observation
 is. This is to remind users to keep only good quality observations.
-* Keep or ignore nulls - a null value recorded by a historian can be an indication that the last
+- Keep or ignore nulls - a null value recorded by a historian can be an indication that the last
 known value should no longer be forward filled.
 
 **Example usage:**
