@@ -36,7 +36,7 @@ pydoc-markdown -m historian_query '{
       render_toc: false,
       insert_header_anchors: false
     }
-  }' > README.md
+  }' > reference.md
 
 # Process each Markdown file in the current directory
 for file in *.md; do
@@ -50,7 +50,7 @@ echo "Markdown files processed successfully."
 
 # Generate the wheel file if the --wheel flag is specified
 if [ "$GENERATE_WHEEL" = true ]; then
-    pytest tests/
+    pytest .
     python setup.py sdist bdist_wheel
     check-wheel-contents dist/
     echo "Wheel file generated successfully."

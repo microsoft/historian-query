@@ -1,33 +1,3 @@
-"""This Python library helps query regularized time series based on raw historian data with
-irregular time intervals (due to compression, deadband, outages etc.) on Spark.
-
-The **HistorianQuery** class is a wrapper around the **TSDF** class in the Databricks
-[Tempo](https://databrickslabs.github.io/tempo/user-guide.html) library. It adds some functionality
-that is helpful for querying data from a historian in manufacturing context:
-
-- Returns records from start to end time (instead of just between first and last record for each
-tag).
-- Interval timestamp is rounded up instead of down, reporting the last known value at the given
-time point.
-- The original timestamp of the observation is also reported.
-- Timeout functionality - forward fill only up to a specified time interval to avoid stale values.
-- Filter by quality flag - historians often capture an indication of how reliable each observation
-is. This is to remind users to keep only good quality observations.
-- Keep or ignore nulls - a null value recorded by a historian can be an indication that the last
-known value should no longer be forward filled.
-
-**Example usage:**
-
-```python
-from historian_query import HistorianQuery
-
-HQ = HistorianQuery(df=df, sample_freq="1 minute", ff_timeout="15 minutes",
-    keep_quality=[3], ignore_nulls=False)
-resampled_df = HQ.resample(start_ts_str="2023-01-01 09:00:00",
-    end_ts_str="2023-01-01 18:00:00")
-```
-"""
-
 from functools import singledispatchmethod
 import pyspark.sql.functions as sfn
 from pyspark.sql import DataFrame
@@ -39,21 +9,12 @@ spark = SparkSession.builder.getOrCreate()
 
 class HistorianQuery:
     """This class is used to query regularized time series based on raw historian data on Spark.
-
-    Args:
-        df: Spark dataframe with columns `["tag_name", "ts", "value_double", "quality"]`\n
-        **OR (alternative initialization)**:\n
-        `table_name` _str_ and `tag_list` _list[str]_ - name of the table in the Spark catalog and
-        list of tag names to query.
-        sample_freq (str): resampled interval length, e.g. "1 minute".
-        ff_timeout (str): maximum time interval for forward filling, e.g. "15 minutes", beyond
-        which nulls are filled.
-        keep_quality (int, list[int] or None): quality codes for which samples are to be kept
-        (e.g In GE historian 3 is "good" and in Aveva 192 is "good" quality). There is no default
-        as the quality codes depend on the historian. Filtering is strongly encouraged, but setting
-        to None will keep all records.
-        ignore_nulls (bool): if True, nulls are ignored when resampling, and the last non-null
-        value will be used for forward filling (until timeout). Default False.
+    Methods:
+        resample: get time series resampled to regular time intervals (this is the main method).
+        get_raw_data: get underlying raw data from historian.
+        get_latest_ts: get the latest timestamp in the source dataframe.
+        pad_constant_timestamp: create records with a constant timestamp for each tag.
+        str2ts: convert a timestamp string to a Spark timestamp.
     Attributes:
         column_types (dict): dictionary of column names and types, used for casting.
         required_cols (list[str]): list of required columns, in the right order.
@@ -61,6 +22,22 @@ class HistorianQuery:
 
     @singledispatchmethod  # main scenario - initialize with a Spark DF
     def __init__(self, df: DataFrame, sample_freq, ff_timeout, keep_quality, ignore_nulls=False):
+        """
+        Args:
+            df: Spark dataframe with columns `["tag_name", "ts", "value_double", "quality"]`\n
+            **OR (alternative initialization)**:\n
+            `table_name` _str_ and `tag_list` _list[str]_ - name of the table in the Spark catalog
+            and list of tag names to query.
+            sample_freq (str): resampled interval length, e.g. "1 minute".
+            ff_timeout (str): maximum time interval for forward filling, e.g. "15 minutes", beyond
+            which nulls are filled.
+            keep_quality (int, list[int] or None): quality codes for which samples are to be kept
+            (e.g In GE historian 3 is "good" and in Aveva 192 is "good" quality). There is no
+            default as the quality codes depend on the historian. Filtering is strongly encouraged,
+            but setting to None will keep all records.
+            ignore_nulls (bool): if True, nulls are ignored when resampling, and the last non-null
+            value will be used for forward filling (until timeout). Default False.
+        """
         if not hasattr(self, "table_name"):
             self.table_name = None
             self.tag_list = None
@@ -91,7 +68,7 @@ class HistorianQuery:
         self.__init__(df, *args, **kwargs)
 
     def resample(self, start_ts_str, end_ts_str):
-        """Get time series resampled to regular time intervals (this is the main method).
+        """Get time series resampled to regular time intervals.
 
         Args:
             start_ts_str (str): start of the time range

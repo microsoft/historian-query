@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pyspark.sql.functions as sfn
 
-from context import HistorianQuery, spark
+from historian_query import HistorianQuery, spark
 
 
 # @pytest.fixture
