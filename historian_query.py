@@ -25,7 +25,7 @@ class HistorianQuery:
         """
         Args:
             df: Spark dataframe with columns `["tag_name", "ts", "value_double", "quality"]`\n
-            **OR (alternative initialization)**:\n
+            **OR (alternative initialization; NOTE: the first argument must be positional)**:\n
             `table_name` _str_ and `tag_list` _list[str]_ - name of the table in the Spark catalog
             and list of tag names to query.
             sample_freq (str): resampled interval length, e.g. "1 minute".

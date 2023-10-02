@@ -36,7 +36,7 @@ def __init__(df: DataFrame,
 
 - `df` - Spark dataframe with columns `["tag_name", "ts", "value_double", "quality"]`
   
-  **OR (alternative initialization)**:
+  **OR (alternative initialization; NOTE: the first argument must be positional)**:
   
   `table_name` _str_ and `tag_list` _list[str]_ - name of the table in the Spark catalog
   and list of tag names to query.

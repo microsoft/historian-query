@@ -25,7 +25,7 @@ tag_dict = {
     "PR03.849ZMC3525_PRESS_PV": "pressure",
 }
 HQ = HistorianQuery(
-    table_name=table_name,
+    table_name,
     tag_list=list(tag_dict.keys()),
     sample_freq="10 seconds",
     ff_timeout="15 minutes",
@@ -35,7 +35,7 @@ df = HQ.resample("2023-08-01 00:00:00", "2023-08-02 00:00:00")
 ```
 
 Note that instead of `table_name` and `tag_list` you can alternatively pass a Spark dataframe `df`,
-which allows for more flexibility for your data source (see the [reference](reference.md)). The
+which gives more flexibility for your data source (see the [reference](reference.md)). The
 output is a resampled Spark dataframe in long format:
 
 | tag_name                 | ts                      | value_double | quality | orig_ts                 |
@@ -51,8 +51,9 @@ output is a resampled Spark dataframe in long format:
 | PR03.849ZMC3525_PRESS_PV | 2023-08-01 00:00:20.000 | 7.371169     | 3       | 2023-08-01 00:00:18.000 |
 | ...                      |                         |              |         |                         |
 
-Each tag now has observations every 10 seconds. Note that the original time stamps are are slightly
-earlier, and some have been filled forward several times (no newer observation available).
+Each tag now has observations every 10 seconds. Note that the original time stamps `orig_ts` are
+slightly earlier, and some have been filled forward several times (no newer observation is
+available).
 
 We can now use standard Spark tools for aggregation and feature engineering, e.g. average over 5
 minute windows:
@@ -85,12 +86,12 @@ The output is now in a suitable format for using in reports or ML models:
 Note that we use the end-point timestamp for each aggregation interval, so that each record is only
 based on data that is available at the specified timestamp.
 
-To summarize we recommend a two-step approach:
+In summary, we recommend a two-step approach:
 
 1) resample to a fine time granularity,
-2) aggregate to desired time windows.
+2) aggregate to the desired time windows.
 
-This ensures that the potentially irregular observations from raw historian data do not bias
+Step 1 ensures that the potentially irregular observations from raw historian data do not bias
 the aggregation (more weight on volatile periods) or lead to skipped/null intervals (due to gaps).
 
 ## How this works
