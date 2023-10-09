@@ -8,7 +8,10 @@ setuptools.setup(
     version="0.0.1",
     author=["Edgars Jakobsons", "Harrington McDowelle"],
     author_email=["ejakobsons@microsoft.com", "mcdowellehar@microsoft.com"],
-    description="Query regularized time series from raw historian data",
+    project_urls={
+        "Homepage": "https://github.com/microsoft/historian-query",
+    },
+    description="Query regularized time series from raw historian data on Spark",
     long_description=long_description,
     long_description_content_type="text/markdown",
     py_modules=["historian_query"],
