@@ -5,6 +5,14 @@ irregular time intervals (due to compression, deadband, outages etc.) on Spark. 
 suited for compressed manufacturing time series coming from a historian database, and it imitates the
 resampling functionality as offered by some historians.
 
+## Installation
+
+`historian-query` can be installed from pip using the following command:
+
+```
+pip install historian-query
+```
+
 ## Useful Links
 
 - [Historian Query reference](https://github.com/microsoft/historian-query/blob/main/reference.md)
