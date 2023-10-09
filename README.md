@@ -7,7 +7,7 @@ resampling functionality as offered by some historians.
 
 ## Useful Links
 
-- [Historian Query reference](reference.md)
+- [Historian Query reference](https://github.com/microsoft/historian-query/blob/main/reference.md)
 - [Databricks Tempo documentation](https://databrickslabs.github.io/tempo/)
 
 ## Example usage
@@ -35,8 +35,9 @@ df = HQ.resample("2023-08-01 00:00:00", "2023-08-02 00:00:00")
 ```
 
 Note that instead of `table_name` and `tag_list` you can alternatively pass a Spark dataframe `df`,
-which gives more flexibility for your data source (see the [reference](reference.md)). The
-output is a resampled Spark dataframe in long format:
+which gives more flexibility for your data source (see the
+[reference](https://github.com/microsoft/historian-query/blob/main/reference.md)).
+The output is a resampled Spark dataframe in long format:
 
 | tag_name                 | ts                      | value_double | quality | orig_ts                 |
 |--------------------------|-------------------------|-------------:|--------:|-------------------------|
@@ -121,5 +122,5 @@ based on past data. This is important for e.g. Machine Learning use-cases, where
 samples must contain only information that is available at inference time during production.
 
 Taking the last known value instead of _mean_ ensures that the value makes sense for any tag, e.g.
-also for 0/1 indicators. For custom aggregation, follow the approach described in
+also for 0/1 indicators. For custom aggregation, follow the approach described in section
 [Example Usage](#example-usage).
