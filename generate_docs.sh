@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Default configuration options
-GENERATE_WHEEL=false  # Default to not generate the wheel file
+GENERATE_DIST=false  # Default to not generate the wheel file
 
 # Process command-line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --wheel)
-            GENERATE_WHEEL=true
+        --dist)
+            GENERATE_DIST=true
             shift
             ;;
         *)
@@ -49,9 +49,17 @@ done
 echo "Markdown files processed successfully."
 
 # Generate the wheel file if the --wheel flag is specified
-if [ "$GENERATE_WHEEL" = true ]; then
+if [ "$GENERATE_DIST" = true ]; then
+    if ! command -v pytest &> /dev/null; then
+        echo "pytest is not installed. Please install it first."
+        return 1
+    fi
+    if ! command -v check-wheel-contents &> /dev/null; then
+        echo "check-wheel-contents is not installed. Please install it first."
+        return 1
+    fi
     pytest .
-    python setup.py sdist bdist_wheel
+    python -m build
     check-wheel-contents dist/
-    echo "Wheel file generated successfully."
+    echo "Wheel + sdist files generated successfully."
 fi

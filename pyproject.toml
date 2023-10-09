@@ -1,0 +1,22 @@
+[project]
+name = "historian_query"
+version = "0.0.1"
+authors = [
+    { name = "Edgars Jakobsons", email = "ejakobsons@microsoft.com" },
+    { name = "Harrington McDowelle", email = "mcdowellehar@microsoft.com" },
+]
+description = "Query regularized time series from raw historian data on Spark"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = ["pyspark>=3.4.1", "dbl-tempo>=0.1.25"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/microsoft/historian-query"
+
+[tool.setuptools]
+py-modules = ["historian_query"]
